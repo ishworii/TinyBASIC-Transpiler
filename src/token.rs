@@ -1,9 +1,10 @@
-#[derive(Debug,PartialEq)]
+use strum_macros::{EnumIter,AsRefStr,EnumString};
+#[derive(EnumIter, AsRefStr, EnumString, Debug,PartialEq,Clone,Copy)]
 pub enum TokenType{
     EOF = -1,
     NEWLINE = 0,
     NUMBER = 1,
-    INDENT = 2,
+    IDENT = 2,
     STRING = 3,
     //keywords
     LABEL = 101,
@@ -29,6 +30,12 @@ pub enum TokenType{
     LTEQ=209,
     GT=210,
     GTEQ=211,
+}
+
+impl TokenType{
+    pub fn value(&self) -> i32{
+        *self as i32
+    }
 }
 
 #[derive(Debug)]

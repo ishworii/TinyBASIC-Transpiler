@@ -1,4 +1,5 @@
 use crate::token::{Token, TokenType};
+use strum::IntoEnumIterator;
 
 #[derive(Debug)]
 pub struct Lexer{
@@ -108,11 +109,59 @@ impl Lexer{
                 Some(Token::new(token_text.to_string(),TokenType::STRING))
             }
 
+            //digit
+            _ if self.curr_char.is_digit(10) =>{
+                let start_pos = self.curr_pos as usize;
+                while self.peek().is_digit(10){
+                    self.next_char();
+                }
+                if self.peek() == '.'{
+                    self.next_char();
+                    if !self.peek().is_digit(10){
+                        self.abort(String::from("Illegal character in number"));
+                        return None;
+                    }
+                    while self.peek().is_digit(10){
+                        self.next_char();
+                    }
+                }
+                let token_text: &str = &self.source[start_pos..(self.curr_pos + 1) as usize];
+                Some(Token::new(token_text.to_string(),TokenType::NUMBER))
+            }
+            //text
+            _ if self.curr_char.is_alphabetic() => {
+                let start_pos = self.curr_pos as usize;
+                while self.peek().is_alphanumeric(){
+                    self.next_char();
+                }
+                let token_text:&str = &self.source[start_pos..(self.curr_pos + 1) as usize];
+                let keyword = Lexer::check_keyword(token_text.to_string());
+                if keyword == None{
+                    Some(Token::new(token_text.to_string(),TokenType::IDENT))
+                }
+                else{
+                    Some(Token::new(token_text.to_string(),keyword.unwrap()))
+                }
+            }
+
+
+
+
 
             _ => None,
         };
         self.next_char();
         token
+    }
+
+    fn check_keyword(token_text : String) -> Option<TokenType>{
+        for token_type in TokenType::iter(){
+            if token_type.as_ref() == token_text && token_type.value() >= 100 && token_type.value() < 200{
+                return Some(token_type);
+            }
+        }
+        None
+
     }
 
     fn abort(&self,message:String){

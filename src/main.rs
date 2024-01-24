@@ -5,7 +5,7 @@ mod lexer;
 mod token;
 
 fn main() {
-    let source = String::from("+- \"This is a string\" # This is a comment!\n */");
+    let source = String::from("IF+-123 foo*THEN/");
     let mut lexer = Lexer::new(source);
     let mut token = lexer.get_token().unwrap();
     while token.token_type != TokenType::EOF{
