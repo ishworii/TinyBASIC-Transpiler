@@ -38,10 +38,16 @@ impl TokenType{
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token{
-    text : String,
+    pub text : String,
     pub token_type : TokenType,
+}
+
+impl Default for Token{
+    fn default() -> Self {
+        Token{text: String::from(""),token_type:TokenType::EOF}
+    }
 }
 
 impl Token{
